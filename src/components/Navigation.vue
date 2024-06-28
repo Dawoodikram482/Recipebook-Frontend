@@ -16,7 +16,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
@@ -33,21 +33,57 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                <router-link class="dropdown-item" :to="{ name: 'CategoryPage', params: { category: 'Breakfast' } }">Breakfast</router-link>
+                <router-link
+                    class="dropdown-item"
+                    :to="{ name: 'CategoryPage', params: { category: 'Breakfast' } }"
+                >Breakfast</router-link
+                >
               </li>
               <li>
-                <router-link class="dropdown-item" :to="{ name: 'CategoryPage', params: { category: 'Lunch' } }">Lunch</router-link>
+                <router-link
+                    class="dropdown-item"
+                    :to="{ name: 'CategoryPage', params: { category: 'Lunch' } }"
+                >Lunch</router-link
+                >
               </li>
               <li>
-                <router-link class="dropdown-item" :to="{ name: 'CategoryPage', params: { category: 'Dinner' } }">Dinner</router-link>
+                <router-link
+                    class="dropdown-item"
+                    :to="{ name: 'CategoryPage', params: { category: 'Dinner' } }"
+                >Dinner</router-link
+                >
               </li>
             </ul>
           </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/login">Login</router-link>
+        </ul>
+        <ul class="navbar-nav">
+          <li v-if="isLoggedIn" class="nav-item dropdown">
+            <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownUser"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+            >
+              {{ loginSessionStore.getFirstName }}
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
+              <li>
+                <router-link class="dropdown-item" to="/recipes"
+                >Manage Recipes</router-link
+                >
+              </li>
+            </ul>
           </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/register">Register</router-link>
+          <li v-if="!isLoggedIn" class="nav-item">
+            <router-link to="/login" class="nav-link">Login</router-link>
+          </li>
+          <li v-if="!isLoggedIn" class="nav-item">
+            <router-link :to="{ name: 'Register' }" class="nav-link">Register</router-link>
+          </li>
+          <li v-if="isLoggedIn" class="nav-item">
+            <button class="nav-link" @click="logout">Logout</button>
           </li>
         </ul>
       </div>
@@ -56,8 +92,25 @@
 </template>
 
 <script>
+import { useLoginSessionStore } from '../stores/LoginSession.js';
+
 export default {
   name: 'Navbar',
+  setup() {
+    return {
+      loginSessionStore: useLoginSessionStore(),
+    };
+  },
+  computed: {
+    isLoggedIn() {
+      return this.loginSessionStore.isLoggedIn;
+    },
+  },
+  methods: {
+    logout() {
+      this.loginSessionStore.logout();
+    },
+  },
 };
 </script>
 
@@ -65,12 +118,13 @@ export default {
 .navbar-brand .logo-img {
   max-height: 100px;
 }
+
 .navbar-nav .nav-link {
   color: #fff;
 }
 
 .navbar-nav .nav-link:hover {
-  color: #0DCAF0;
+  color: #0dcaf0;
 }
 
 .dropdown-menu .dropdown-item {

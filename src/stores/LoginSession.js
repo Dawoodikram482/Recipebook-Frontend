@@ -1,5 +1,5 @@
-import {defineStore} from 'pinia'
-import axios from '../axios-auth'
+import { defineStore } from 'pinia';
+import axios from '../axios-auth';
 
 export const useLoginSessionStore = defineStore('loginSession', {
     state: () => ({
@@ -8,16 +8,16 @@ export const useLoginSessionStore = defineStore('loginSession', {
         emailAddress: '',
     }),
     getters: {
-        isLoggedIn: (state) => state.jwt !== '',
         getFirstName: (state) => state.firstName,
-        getEmailAddress: (state) => state.username,
+        getEmailAddress: (state) => state.emailAddress,
+        isLoggedIn: (state) => state.jwt !== '',
     },
     actions: {
         localLogin() {
             if (localStorage['jwt']) {
                 this.jwt = localStorage['jwt'];
                 this.firstName = localStorage['firstName'];
-                this.username = localStorage['username'];
+                this.emailAddress = localStorage['emailAddress'];
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage['jwt'];
             }
         },
@@ -29,21 +29,25 @@ export const useLoginSessionStore = defineStore('loginSession', {
                 }).then((response) => {
                     this.jwt = response.data.jwt;
                     localStorage['jwt'] = response.data.jwt;
-                    localStorage['username'] = response.data.name;
+                    localStorage['firstName'] = response.data.name;
+                    localStorage['emailAddress'] = response.data.email;
+                    this.firstName = response.data.name;
+                    this.emailAddress = response.data.email;
                     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage['jwt'];
                     resolve();
                 }).catch((error) => {
                     reject(error.response.data.errorMessage);
-                })
+                });
             });
         },
         logout() {
             this.jwt = '';
             this.firstName = '';
+            this.emailAddress = '';
             localStorage.removeItem('jwt');
             localStorage.removeItem('firstName');
             localStorage.removeItem('emailAddress');
             delete axios.defaults.headers.common['Authorization'];
         }
     },
-})
+});
