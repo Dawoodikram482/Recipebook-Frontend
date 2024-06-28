@@ -1,24 +1,28 @@
 <template>
-  <div class="login-page">
+  <div class="signup-page">
     <div class="left-section">
       <div class="logo">
-        <img src="@/assets/logo.png" alt="Logo" />
+        <img src="@/assets/logo.png" alt="Logo"/>
       </div>
     </div>
     <div class="right-section">
-      <div class="login-form-container">
-        <form @submit.prevent="handleLogin">
+      <div class="signup-form-container">
+        <form @submit.prevent="registerUser">
           <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" v-model="username" id="username" placeholder="username" required />
+            <input type="text" v-model="username" id="username" placeholder="Username" required/>
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" v-model="email" id="email" placeholder="Email" required/>
           </div>
           <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" v-model="password" id="password" placeholder="Password" required />
+            <input type="password" v-model="password" id="password" placeholder="Password" required/>
           </div>
-          <button type="submit">LOGIN</button>
+          <button type="submit">SIGN UP</button>
           <div class="footer-links">
-            <router-link to="/register">Don't have an account, Sign up real quick!</router-link>
+            <router-link to="/login">Already have an account? Login here.</router-link>
           </div>
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         </form>
@@ -28,40 +32,44 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useLoginSessionStore } from '../stores/LoginSession.js';
+import axios from '../axios-auth.js'; // Assuming axios instance is configured and exported as 'axios'
 
 export default {
-  name: 'LoginPage',
-  setup() {
-    const loginSessionStore = useLoginSessionStore();
-    const username = ref('');
-    const password = ref('');
-    const errorMessage = ref('');
-    const router = useRouter();
-
-    const handleLogin = async () => {
-      try {
-        await loginSessionStore.login(username.value, password.value);
-        await router.push('/');
-      } catch (error) {
-        errorMessage.value = error;
-      }
-    };
-
+  data() {
     return {
-      username,
-      password,
-      errorMessage,
-      handleLogin,
+      username: '',
+      password: '',
+      email: '',
+      errorMessage: ''
     };
   },
+  methods: {
+    async registerUser() {
+      try {
+        const response = await axios.post('/users/register', {
+          username: this.username,
+          password: this.password,
+          email: this.email
+        });
+
+        console.log('User registered:', response.data);
+        this.$router.push('/login');
+
+      } catch (error) {
+        console.error('Error registering user:', error);
+        if (error.response && error.response.data && error.response.data.message) {
+          this.errorMessage = error.response.data.message;
+        } else {
+          this.errorMessage = 'Failed to register user. Please try again later.';
+        }
+      }
+    }
+  }
 };
 </script>
 
 <style scoped>
-.login-page {
+.signup-page {
   display: flex;
   height: 100vh;
   background-color: #1a1a1a;
@@ -87,7 +95,7 @@ export default {
   background-color: #343a40;
 }
 
-.login-form-container {
+.signup-form-container {
   width: 80%;
   max-width: 400px;
   padding: 2rem;
