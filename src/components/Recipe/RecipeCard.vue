@@ -1,6 +1,6 @@
 <template>
   <div class="recipe-card">
-    <img :src="getImageUrl(recipe.Image)" alt="Recipe Image" class="recipe-image" />
+    <img :src="imageSrc" alt="Recipe Image" class="recipe-image" v-if="imageSrc"/>
     <div class="recipe-details">
       <h2>{{ recipe.RecipeTitle.trim() }}</h2>
       <p>Category: {{ recipe.Category }}</p>
@@ -23,19 +23,49 @@
 </template>
 
 <script>
+import { ref, watch } from 'vue';
+
+// Define the image glob import
+const images = import.meta.glob('@/assets/images/*');
+
 export default {
   name: 'RecipeCard',
   props: {
     recipe: Object,
   },
-  methods: {
-    getImageUrl(imagePath) {
-      return `src/assets/images/${imagePath}`;
-    },
-    splitLines(text) {
-      if (!text) return [];
-      return text.trim().split('\n');
-    },
+  setup(props) {
+    const imageSrc = ref('');
+
+    const loadImage = async (imagePath) => {
+      // Use import.meta.glob to resolve images dynamically
+      const path = `/src/assets/images/${imagePath}`;
+      const importer = images[path];
+
+      if (importer) {
+        const imageModule = await importer();
+        imageSrc.value = imageModule.default;
+      } else {
+        console.error(`Image not found: ${path}`);
+        // Load default image if specific image not found
+        const defaultImporter = images['/src/assets/images/default.jpg'];
+        if (defaultImporter) {
+          const defaultImage = await defaultImporter();
+          imageSrc.value = defaultImage.default;
+        }
+      }
+    };
+
+    watch(() => props.recipe.Image, (newImagePath) => {
+      loadImage(newImagePath);
+    }, { immediate: true });
+
+    return {
+      imageSrc,
+      splitLines(text) {
+        if (!text) return [];
+        return text.trim().split('\n');
+      },
+    };
   },
 };
 </script>

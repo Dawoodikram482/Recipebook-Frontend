@@ -33,13 +33,13 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                <router-link class="dropdown-item" to="/categories/breakfast">Breakfast</router-link>
+                <router-link class="dropdown-item" :to="{ name: 'CategoryPage', params: { category: 'Breakfast' } }">Breakfast</router-link>
               </li>
               <li>
-                <router-link class="dropdown-item" to="/categories/lunch">Lunch</router-link>
+                <router-link class="dropdown-item" :to="{ name: 'CategoryPage', params: { category: 'Lunch' } }">Lunch</router-link>
               </li>
               <li>
-                <router-link class="dropdown-item" to="/categories/dinner">Dinner</router-link>
+                <router-link class="dropdown-item" :to="{ name: 'CategoryPage', params: { category: 'Dinner' } }">Dinner</router-link>
               </li>
             </ul>
           </li>
