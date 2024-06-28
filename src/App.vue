@@ -6,14 +6,14 @@
   <Footer v-if="$route.path !== '/login' && $route.path !=='/login/signup'"/>
 </template>
 <script>
-import {LoginSessionStore} from '@/stores/LoginSession.js'
+import {useLoginSessionStore} from '@/stores/LoginSession.js'
 import Navigation from "@/components/Navigation.vue";
 import Footer from "@/components/Footer.vue";
 
 export default {
   setup() {
     return {
-      loginSessionStore: LoginSessionStore()
+      loginSessionStore: useLoginSessionStore()
     };
   },
   name: "App",
@@ -22,7 +22,7 @@ export default {
     Footer
   },
   mounted() {
-    this.loginSessionStore.localLogin();
+    this.useLoginSessionStore.localLogin();
   }
 }
 
