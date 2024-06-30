@@ -91,14 +91,22 @@
   </nav>
 </template>
 
+
 <script>
 import { useLoginSessionStore } from '../stores/LoginSession.js';
+import { onMounted } from 'vue';
 
 export default {
   name: 'Navbar',
   setup() {
+    const loginSessionStore = useLoginSessionStore();
+
+    onMounted(() => {
+      loginSessionStore.localLogin();
+    });
+
     return {
-      loginSessionStore: useLoginSessionStore(),
+      loginSessionStore,
     };
   },
   computed: {
@@ -113,6 +121,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .navbar-brand .logo-img {

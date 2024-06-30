@@ -1,6 +1,6 @@
 <template>
   <div class="recipe-card">
-    <img :src="imageSrc" alt="Recipe Image" class="recipe-image" v-if="imageSrc"/>
+    <img :src="imageSrc" alt="Recipe Image" class="recipe-image" v-if="imageSrc" />
     <div class="recipe-details">
       <h2>{{ recipe.RecipeTitle.trim() }}</h2>
       <p>Category: {{ recipe.Category }}</p>
@@ -36,28 +36,33 @@ export default {
   setup(props) {
     const imageSrc = ref('');
 
-    const loadImage = async (imagePath) => {
-      // Use import.meta.glob to resolve images dynamically
-      const path = `/src/assets/images/${imagePath}`;
-      const importer = images[path];
+    // Method to construct image URL based on backend path
+    const getBackendImageUrl = (imagePath) => {
+      return `http://localhost/images/${imagePath}`; // Adjust URL based on your Apache rewrite rules
+    };
 
-      if (importer) {
-        const imageModule = await importer();
-        imageSrc.value = imageModule.default;
-      } else {
-        console.error(`Image not found: ${path}`);
-        // Load default image if specific image not found
-        const defaultImporter = images['/src/assets/images/default.jpg'];
-        if (defaultImporter) {
-          const defaultImage = await defaultImporter();
-          imageSrc.value = defaultImage.default;
+    const loadImage = async (imagePath) => {
+      try {
+        const imageUrl = getBackendImageUrl(imagePath);
+        const importer = images[`@/assets/images/${imagePath}`];
+
+        if (importer) {
+          const imageModule = await importer();
+          imageSrc.value = imageModule.default;
+        } else {
+          console.error(`Image not found locally: ${imagePath}`);
+          // Attempt to load image from backend URL
+          imageSrc.value = imageUrl;
         }
+      } catch (error) {
+        console.error('Error loading image:', error);
       }
     };
 
+    // Watch for changes in recipe.Image and load the corresponding image
     watch(() => props.recipe.Image, (newImagePath) => {
       loadImage(newImagePath);
-    }, { immediate: true });
+    }, {immediate: true});
 
     return {
       imageSrc,
@@ -99,7 +104,8 @@ export default {
   margin-right: 20px;
 }
 
-h2, h3 {
+h2,
+h3 {
   margin-top: 0;
 }
 </style>

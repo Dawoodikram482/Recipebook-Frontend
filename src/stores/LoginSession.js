@@ -14,11 +14,11 @@ export const useLoginSessionStore = defineStore('loginSession', {
     },
     actions: {
         localLogin() {
-            if (localStorage['jwt']) {
-                this.jwt = localStorage['jwt'];
-                this.firstName = localStorage['firstName'];
-                this.emailAddress = localStorage['emailAddress'];
-                axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage['jwt'];
+            if (localStorage.getItem('jwt')) {
+                this.jwt = localStorage.getItem('jwt');
+                this.firstName = localStorage.getItem('firstName');
+                this.emailAddress = localStorage.getItem('emailAddress');
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.jwt;
             }
         },
         login(username, password) {
@@ -28,12 +28,12 @@ export const useLoginSessionStore = defineStore('loginSession', {
                     password: password,
                 }).then((response) => {
                     this.jwt = response.data.jwt;
-                    localStorage['jwt'] = response.data.jwt;
-                    localStorage['firstName'] = response.data.name;
-                    localStorage['emailAddress'] = response.data.email;
+                    localStorage.setItem('jwt', response.data.jwt);
+                    localStorage.setItem('firstName', response.data.name);
+                    localStorage.setItem('emailAddress', response.data.email);
                     this.firstName = response.data.name;
                     this.emailAddress = response.data.email;
-                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage['jwt'];
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.jwt;
                     resolve();
                 }).catch((error) => {
                     reject(error.response.data.errorMessage);

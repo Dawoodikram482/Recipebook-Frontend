@@ -22,7 +22,7 @@ export default {
     Footer
   },
   mounted() {
-    this.useLoginSessionStore.localLogin();
+    this.loginSessionStore.localLogin();
   }
 }
 

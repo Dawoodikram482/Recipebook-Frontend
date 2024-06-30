@@ -4,16 +4,16 @@
     <div v-else>Loading category...</div>
     <div v-if="recipesLoading">Loading...</div>
     <div class="recipes" v-else>
-      <RecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe"/>
+      <RecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe" />
     </div>
     <div v-if="error" class="error-message">{{ error }}</div>
   </div>
 </template>
 
 <script>
-import {useRecipeStore} from '@/stores/RecipeStore.js';
-import {onMounted, computed, watch, ref} from 'vue';
-import {useRoute} from 'vue-router';
+import { useRecipeStore } from '@/stores/RecipeStore.js';
+import { onMounted, computed, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
 import RecipeCard from '@/components/Recipe/RecipeCard.vue';
 
 export default {
@@ -35,8 +35,9 @@ export default {
       }
     };
 
+    // Fetch recipes on mount and watch category changes
     onMounted(fetchRecipes);
-    watch(() => route.params.category, fetchRecipes); // Watch for changes in route.params.category
+    watchEffect(fetchRecipes);
 
     return {
       category,

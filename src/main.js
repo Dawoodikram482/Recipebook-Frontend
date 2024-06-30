@@ -8,9 +8,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'bootstrap';
 
-const app = createApp(App)
+const app = createApp(App);
+const pinia = createPinia();
+app.use(pinia);
+app.use(router);
 
-app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
+app.mount('#app');
