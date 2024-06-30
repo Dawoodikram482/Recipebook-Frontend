@@ -1,14 +1,22 @@
 # Recipebook-Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+**This is the Frontend of the Recipe Book Project for Web Development 2.** 
 
-## Recommended IDE Setup
+- User has to log in with credentials for performing CRUD operations on recipes.
+- Regular visitor can browse all recipes and create recipes.
+- In manage recipes, visitor can only perform CRUD operations on their own recipes.
+- Admin can perform CRUD operations on all recipes.
+- Admin can also view a list of users and delete them.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+**Login Information:**
 
-## Customize configuration
+- **Admin:**
+    - Email: `Parranasian`
+    - Password: `Parranasian@123`
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- **Visitor:**
+    - Email: `Ikram`
+    - Password: `Ikram@123`
 
 ## Project Setup
 
@@ -22,8 +30,4 @@ npm install
 npm run dev
 ```
 
-### Compile and Minify for Production
 
-```sh
-npm run build
-```
