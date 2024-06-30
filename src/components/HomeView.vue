@@ -4,12 +4,18 @@
       <h1>Welcome to our Recipe Book!</h1>
       <p>Discover a wide variety of recipes to suit every taste and occasion. Whether you're looking for a quick
         breakfast, a hearty lunch, or an elegant dinner, we have something for everyone. Start your culinary adventure
-        by exploring our collection of delicious recipes. Simply enter a category below to find recipes that fit your
+        by exploring our collection of delicious recipes. Simply select a category below to find recipes that fit your
         needs.</p>
     </div>
     <div class="search-section">
       <div class="search-bar">
-        <input type="text" v-model="category" placeholder="e.g. Breakfast"/>
+        <select v-model="category">
+          <option value="">Select a category</option>
+          <option value="Breakfast">Breakfast</option>
+          <option value="Lunch">Lunch</option>
+          <option value="Dinner">Dinner</option>
+
+        </select>
         <button @click="searchRecipes">Search</button>
       </div>
     </div>
@@ -23,7 +29,7 @@
 </template>
 
 <script>
-import axios from '../axios-auth'
+import axios from '../axios-auth';
 import RecipeCard from '../components/Recipe/RecipeCard.vue';
 
 export default {
@@ -42,10 +48,14 @@ export default {
     async searchRecipes() {
       this.feedbackMessage = '';
       try {
+        if (!this.category) {
+          this.feedbackMessage = 'Please select a category.';
+          return;
+        }
         const response = await axios.get('recipes/category', {
           params: {
-            category: this.category
-          }
+            category: this.category,
+          },
         });
         this.recipes = response.data;
         if (this.recipes.length === 0) {
@@ -57,7 +67,7 @@ export default {
       }
     },
   },
-  };
+};
 </script>
 
 <style scoped>
@@ -90,7 +100,7 @@ export default {
   padding: 5px;
 }
 
-.search-bar input {
+.search-bar select {
   flex: 1;
   padding: 10px 20px;
   border: none;
