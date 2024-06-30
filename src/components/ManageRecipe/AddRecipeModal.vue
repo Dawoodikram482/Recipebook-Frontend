@@ -14,7 +14,12 @@
             </div>
             <div class="mb-3">
               <label for="category" class="form-label">Category</label>
-              <input type="text" id="category" v-model="recipe.Category" class="form-control" required />
+              <select id="category" v-model="recipe.Category" class="form-control" required>
+                <option value="" disabled>Select a category</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+              </select>
             </div>
             <div class="mb-3">
               <label for="ingredients" class="form-label">Ingredients</label>
@@ -63,11 +68,11 @@ export default {
 
       try {
         await store.addRecipe(formData); // Pass formData directly to the addRecipe action
-        emit('close');
+        // emit('close');
         emit('saved');
       } catch (error) {
         console.error('Failed to add recipe:', error);
-        // Handle error as needed
+        emit('error', 'Error saving recipe');        // Handle error as needed
       }
     };
 

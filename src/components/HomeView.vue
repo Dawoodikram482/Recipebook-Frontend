@@ -13,6 +13,9 @@
         <button @click="searchRecipes">Search</button>
       </div>
     </div>
+    <div v-if="feedbackMessage" class="alert alert-danger" role="alert">
+      {{ feedbackMessage }}
+    </div>
     <div class="recipes">
       <RecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe"/>
     </div>
@@ -32,10 +35,12 @@ export default {
     return {
       category: '',
       recipes: [],
+      feedbackMessage: '',
     };
   },
   methods: {
     async searchRecipes() {
+      this.feedbackMessage = '';
       try {
         const response = await axios.get('recipes/category', {
           params: {
@@ -43,8 +48,12 @@ export default {
           }
         });
         this.recipes = response.data;
+        if (this.recipes.length === 0) {
+          this.feedbackMessage = 'No recipes found for the selected category.';
+        }
       } catch (error) {
         console.error('Error fetching recipes:', error);
+        this.feedbackMessage = 'Failed to fetch recipes. Please try again later.';
       }
     },
   },

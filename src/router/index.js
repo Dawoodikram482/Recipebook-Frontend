@@ -4,6 +4,7 @@ import LoginView from '../components/Login.vue'
 import CategoryPage from '../components/Recipe/CategoryPage.vue'
 import Register from "@/components/Register.vue";
 import ManageRecipe from "@/components/ManageRecipe/ManageRecipe.vue";
+import ManageUsers from "@/components/ManageUsers/ManageUsers.vue";
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -30,6 +31,11 @@ const router = createRouter({
             path:'/recipes',
             name: 'ManageRecipe',
             component: ManageRecipe
+        },
+        {
+            path:'/users',
+            name: 'ManageUsers',
+            component: ManageUsers
         }
     ]
 })

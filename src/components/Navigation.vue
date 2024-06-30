@@ -36,22 +36,19 @@
                 <router-link
                     class="dropdown-item"
                     :to="{ name: 'CategoryPage', params: { category: 'Breakfast' } }"
-                >Breakfast</router-link
-                >
+                >Breakfast</router-link>
               </li>
               <li>
                 <router-link
                     class="dropdown-item"
                     :to="{ name: 'CategoryPage', params: { category: 'Lunch' } }"
-                >Lunch</router-link
-                >
+                >Lunch</router-link>
               </li>
               <li>
                 <router-link
                     class="dropdown-item"
                     :to="{ name: 'CategoryPage', params: { category: 'Dinner' } }"
-                >Dinner</router-link
-                >
+                >Dinner</router-link>
               </li>
             </ul>
           </li>
@@ -71,8 +68,11 @@
             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
               <li>
                 <router-link class="dropdown-item" to="/recipes"
-                >Manage Recipes</router-link
-                >
+                >Manage Recipes</router-link>
+              </li>
+              <li v-if="loginSessionStore.getRole === 'Admin'">
+                <router-link class="dropdown-item" to="/users"
+                >Manage Users</router-link>
               </li>
             </ul>
           </li>
@@ -90,7 +90,6 @@
     </div>
   </nav>
 </template>
-
 
 <script>
 import { useLoginSessionStore } from '../stores/LoginSession.js';
@@ -121,7 +120,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .navbar-brand .logo-img {

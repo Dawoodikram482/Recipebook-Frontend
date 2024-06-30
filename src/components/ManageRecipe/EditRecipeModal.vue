@@ -12,10 +12,13 @@
               <label for="title" class="form-label">Title</label>
               <input type="text" id="title" v-model="recipe.RecipeTitle" class="form-control" required />
             </div>
-            <div class="mb-3">
-              <label for="category" class="form-label">Category</label>
-              <input type="text" id="category" v-model="recipe.Category" class="form-control" required />
-            </div>
+            <label for="category" class="form-label">Category</label>
+            <select id="category" v-model="recipe.Category" class="form-control" required>
+              <option value="" disabled>Select a category</option>
+              <option value="Breakfast">Breakfast</option>
+              <option value="Lunch">Lunch</option>
+              <option value="Dinner">Dinner</option>
+            </select>
             <div class="mb-3">
               <label for="ingredients" class="form-label">Ingredients</label>
               <textarea id="ingredients" v-model="recipe.Ingredients" class="form-control" required></textarea>

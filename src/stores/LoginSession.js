@@ -6,11 +6,13 @@ export const useLoginSessionStore = defineStore('loginSession', {
         jwt: '',
         firstName: '',
         emailAddress: '',
+        role: '',
     }),
     getters: {
         getFirstName: (state) => state.firstName,
         getEmailAddress: (state) => state.emailAddress,
         isLoggedIn: (state) => state.jwt !== '',
+        getRole: (state) => state.role
     },
     actions: {
         localLogin() {
@@ -18,6 +20,7 @@ export const useLoginSessionStore = defineStore('loginSession', {
                 this.jwt = localStorage.getItem('jwt');
                 this.firstName = localStorage.getItem('firstName');
                 this.emailAddress = localStorage.getItem('emailAddress');
+                this.role = localStorage.getItem('role');
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.jwt;
             }
         },
@@ -31,8 +34,10 @@ export const useLoginSessionStore = defineStore('loginSession', {
                     localStorage.setItem('jwt', response.data.jwt);
                     localStorage.setItem('firstName', response.data.name);
                     localStorage.setItem('emailAddress', response.data.email);
+                    localStorage.setItem('role', response.data.role);
                     this.firstName = response.data.name;
                     this.emailAddress = response.data.email;
+                    this.role = response.data.role;
                     axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.jwt;
                     resolve();
                 }).catch((error) => {

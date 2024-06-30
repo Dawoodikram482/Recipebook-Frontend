@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from '../axios-auth';
+import { useLoginSessionStore } from './LoginSession.js';
 
 export const useRecipeStore = defineStore({
     id: 'recipe',
@@ -12,6 +13,22 @@ export const useRecipeStore = defineStore({
         async fetchRecipes() {
             this.recipesLoading = true;
             try {
+                const loginSessionStore = useLoginSessionStore();
+                if (loginSessionStore.role === 'Admin') {
+                    await this.fetchAllRecipes();
+                } else {
+                    await this.fetchUserRecipes();
+                }
+            } catch (error) {
+                console.error('Error fetching recipes:', error);
+                this.error = error.response?.data || 'Unknown error occurred';
+            } finally {
+                this.recipesLoading = false;
+            }
+        },
+        async fetchUserRecipes() {
+            this.recipesLoading = true;
+            try {
                 console.log("Fetching recipes...");
                 const response = await axios.get('/recipes/user');
                 console.log("Fetched recipes:", response.data);
@@ -22,6 +39,17 @@ export const useRecipeStore = defineStore({
                 this.error = error.response?.data || 'Unknown error occurred';
             } finally {
                 this.recipesLoading = false;
+            }
+        },
+        async fetchAllRecipes() {
+          this.recipesLoading = true;
+          try{
+              const response = await axios.get('/recipes');
+              this.recipes = response.data;
+                this.error = null;
+          }catch (error){
+              console.error('Error fetching recipes:', error);
+              this.error = error.response?.data || 'Unknown error occurred';
             }
         },
         async fetchRecipesByCategory(category) {
@@ -46,7 +74,7 @@ export const useRecipeStore = defineStore({
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-                this.recipes.push(response.data);
+                this.recipes=response.data;
             } catch (error) {
                 console.error('Failed to add recipe:', error);
                 this.error = error.response?.data || 'Unknown error occurred';
@@ -70,6 +98,7 @@ export const useRecipeStore = defineStore({
             try {
                 await axios.delete(`/recipes/${id}`);
                 this.recipes = this.recipes.filter(recipe => recipe.id !== id);
+                await this.fetchRecipes();
             } catch (error) {
                 console.error('Failed to delete recipe:', error);
                 this.error = error.response?.data || 'Unknown error occurred';

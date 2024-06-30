@@ -1,6 +1,11 @@
 <template>
   <div class="container mt-4">
     <h1>Manage Recipes</h1>
+
+    <div v-if="feedbackMessage" :class="['alert', feedbackClass]" role="alert">
+      {{ feedbackMessage }}
+    </div>
+
     <button @click="showAddRecipeModal" class="btn btn-primary mb-3">Add Recipe</button>
     <table class="table table-bordered" v-if="!recipesLoading && recipes.length">
       <thead>
@@ -32,8 +37,8 @@
     <div v-else-if="recipesLoading">Loading...</div>
     <div v-else>No recipes found.</div>
 
-    <AddRecipeModal v-if="showAddModal" @close="showAddModal = false" @saved="fetchRecipes"/>
-    <EditRecipeModal v-if="showEditModal" :recipe="currentRecipe" @close="showEditModal = false" @saved="fetchRecipes"/>
+    <AddRecipeModal v-if="showAddModal" @close="showAddModal = false" @saved="handleSaved"/>
+    <EditRecipeModal v-if="showEditModal" :recipe="currentRecipe" @close="showEditModal = false" @saved="handleSaved"/>
   </div>
 </template>
 
@@ -54,9 +59,21 @@ export default {
     const showAddModal = ref(false);
     const showEditModal = ref(false);
     const currentRecipe = ref(null);
+    const feedbackMessage = ref('');
+    const feedbackClass = ref('');
+
+    const setFeedbackMessage = (message, isSuccess = true) => {
+      feedbackMessage.value = message;
+      feedbackClass.value = isSuccess ? 'alert-success' : 'alert-danger';
+    };
 
     const fetchRecipes = () => {
-      store.fetchRecipes();
+      try {
+        store.fetchRecipes();
+        setFeedbackMessage('Recipes fetched successfully.', true)
+      }catch (error) {
+        setFeedbackMessage('There was an error fetching the recipes.', false);
+      }
     };
 
     onMounted(() => {
@@ -74,13 +91,26 @@ export default {
 
     const confirmDeleteRecipe = (id) => {
       if (confirm('Are you sure you want to delete this recipe?')) {
-        store.deleteRecipe(id);
-        fetchRecipes();
+        try {
+          store.deleteRecipe(id);
+          fetchRecipes();
+          setFeedbackMessage('Recipe deleted successfully.', true)
+        }catch (error) {
+          setFeedbackMessage('There was an error deleting the recipe.', false);
+        }
       }
+    };
+
+    const handleSaved = async () => {
+      showAddModal.value = false;
+      showEditModal.value = false;
+      fetchRecipes();
+      setFeedbackMessage('Recipe saved successfully.', true);
     };
     const getBackendImageUrl = (imagePath) => {
       return `http://localhost/images/${imagePath}`;
     };
+
     const recipes = computed(() => store.recipes);
     const recipesLoading = computed(() => store.recipesLoading);
 
@@ -95,6 +125,9 @@ export default {
       confirmDeleteRecipe,
       fetchRecipes,
       getBackendImageUrl,
+      feedbackMessage,
+      feedbackClass,
+      handleSaved,
     };
   },
 };
